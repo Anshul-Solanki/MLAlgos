@@ -1,6 +1,3 @@
-# this can be used to generate dataset which is linearly separable
-# for testing ML classification algorithms
-
 import random
 import numpy as np
 import pandas as pd
