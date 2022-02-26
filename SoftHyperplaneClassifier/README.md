@@ -1,4 +1,4 @@
-Machine learning algorithms like - LogisticRegression, SVM finds best possible hyperplane (N-1 dimension) dividing dataset (N dimension) into correct classed, by using objective function and optimizing it based on gradient descent.
+Machine learning algorithms like - LogisticRegression, SVM finds best possible hyperplane (N-1 dimension) dividing dataset (N dimension) into correct classes, by using objective function and optimizing it based on gradient descent.
 
 SoftHyperplaneClassifier is a lightweight code to find approx hyperplane just by traversing dataset. Without using gradient descent.
 Hence timecomplexity is O(M) , M: is length of dataset
