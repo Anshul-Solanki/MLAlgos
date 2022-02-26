@@ -49,7 +49,7 @@ class LinearlySeparableDataSetGenerator :
 
 			maxRetries -= 1
 
-		if (maxRetries == 0) :
+		if (dataSetSuccessfullyGenerated == False) :
 			print("could not generate dataset after retrying many times")
 
 		return dataSet_WithClassValues
