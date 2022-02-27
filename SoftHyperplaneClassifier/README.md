@@ -6,6 +6,7 @@ Another advantage is this can be used with dynamic data. This means historical d
 This is in contrast to LogisticRegression as it needs complete data to run gradient descent.
 
 TODOs:
+> learn best way to edit readme file
 > test this model with various datasets (including the dataset generator code) and compare results with sklearn Logistic regression model (also try with erroneous dataset)
 > Add basic details of algorithm
 > Describe in details how this algo is effecient (how this fits well with generic data set, and not creating overfitted model)
