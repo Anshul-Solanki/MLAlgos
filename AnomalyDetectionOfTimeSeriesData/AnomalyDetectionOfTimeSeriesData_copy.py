@@ -151,7 +151,7 @@ class RecurrentClassificationAnomalyDetector () :
 				anomalyPoints.append(RecurrentClassificationAnomalyDetector.GetAnomalyPoints(X, segmentLen, optimalThreshold, nonAnomalyCenters))
 
 			# reduce segment length for next iteration
-			segmentLen = segmentLen - 1 #int(segmentLen / 2) 
+			segmentLen = segmentLen - 1
 
 		return anomalyPoints
 
@@ -252,15 +252,53 @@ class RecurrentClassificationAnomalyDetector () :
 		return filteredAnomalyPoints
 
 	@staticmethod
-	def CompareManhattanDist(seg1, seg2, threshold) :
+	def CompareManhattanDist2(seg1, seg2, threshold) :
 		dist = 0
 
 		for i in range(len(seg1)) :
-			dist = dist + abs(seg1[i] - seg2[i]) # need to use [0] for csv dataset, check why?
+			dist = dist + abs(seg1[i] - seg2[i])
 			if (dist > threshold) :
 				return False
 
 		return True
+
+	@staticmethod
+	def CompareManhattanDist(seg1, seg2, threshold) :
+		minDist = 0
+
+		for i in range(len(seg1)) :
+			minDist = minDist + abs(seg1[i][0] - seg2[i][0])
+
+		shiftLen = 0
+		nextShiftLen = 1 #int(len(seg1) * 0.05)
+
+		while nextShiftLen <= int(len(seg1) * 0.05) : #> 0 :
+			if minDist <= threshold :
+				return True
+
+			dist = 0
+			shiftLen = shiftLen + nextShiftLen
+			for i in range(len(seg1) - shiftLen):
+				dist = dist + abs(seg1[i][0] - seg2[i+shiftLen][0])
+				if (dist > minDist) :
+					break
+
+			# add avg dist for shifted len
+			dist = dist + dist * shiftLen / (len(seg1) - shiftLen)
+
+			if (dist < minDist) :
+				minDist = dist
+			else :
+				shiftLen = shiftLen - nextShiftLen
+
+			nextShiftLen = int(nextShiftLen * 2)
+
+		if (minDist <= threshold) :
+			return True
+		else :
+			return False
+
+
 
 	@staticmethod
 	# NOTE: only compare non-anomaly centers
@@ -318,11 +356,11 @@ class RecurrentClassificationAnomalyDetector () :
 def main() :
 	#df = pd.read_csv ("anomalyDatasets\\art_daily_jumpsdown.csv") 
 	#df = pd.read_csv ("anomalyDatasets\\ec2_cpu_utilization_5f5533.csv") # [1282.0] [2993.0] [2962.5] [2966.0] [1269.0, 2965.0]
-	#df = pd.read_csv ("anomalyDatasets\\art_daily_flatmiddle.csv") # [2987.5] [3084.5] [1082.0, 1370.0] [3146.5] [1370.0]
+	df = pd.read_csv ("anomalyDatasets\\art_daily_flatmiddle.csv") # [2987.5] [3084.5] [1082.0, 1370.0] [3146.5] [1370.0]
 	#df = pd.read_csv ("anomalyDatasets\\art_daily_jumpsup.csv") # [3001.5] [3124.5] [3078.0] [3083.0] [3090.5] [3100.0] [2987.0, 3095.0]
 
-	#X = df.values.tolist() #[74.0] [79.0] [100.5] [102.0] [103.0]
-
+	X = df.values.tolist() #[79.0] [100.5] [102.0] [103.0]
+	'''
 	X = []
 	
 	for i in range(1000) :
@@ -334,7 +372,6 @@ def main() :
 			X.append(80)
 		else:
 			X.append(20)
-	'''
 	Y = []
 
 	for i in range(len(X)) :
