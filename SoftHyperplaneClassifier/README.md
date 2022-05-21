@@ -51,7 +51,7 @@ Radius of each cluster is computed as mean distance of datapoints from center in
 For a particular datapoint PC1, this distance is absoulte value of dot product of below vectors:  
 distance = abs( (C1 - C2).dot(C1 - PC1) )  
 
-Add image here !!
+<img src="../Images/SoftHyperplane.png" width=1000 >
 
 ## Results of sample datasets
  
