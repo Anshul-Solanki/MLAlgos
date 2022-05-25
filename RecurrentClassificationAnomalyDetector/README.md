@@ -19,10 +19,11 @@ Main idea is to perform clustering with dataset of segments.
 Here each cluster would indicate set of segments with similar pattern.
 And segments with anomaly will get separated into clusters of minimal size. 
 So our aim is to find an **Optimal Cluster Distribution** which can result anomaly clusters. 
-This cluster distribution is determined by various factors
-and in most cases does not result correct anomaly clusters, or even result false anomalies. 
+This cluster distribution needs to be constructed with precise values of various parameters 
+determining factors which impact the cluster distribution to accurately segregate anomalies 
+So with random values of these parameters in most cases does not result correct anomaly clusters, or even result false anomalies. 
 These factors include selection of segment length, 
-computing distance between segments, 
+approach to compute distance between segments, 
 and threshold used to classify segments to a cluster based on distance.
 Large segment length can result pattern anomalies, 
 and small segment length can result point anomalies. 
