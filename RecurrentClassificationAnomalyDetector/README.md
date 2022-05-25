@@ -59,7 +59,68 @@ So this is iterative algorithm to find optimal cluster distribution for given se
 
 ## Clustering algorithm
 
-Below clustering algorithm is used given fixed values of: segment length, threshold, and complete dataset.
+Given fixed values of: segment length, threshold, and complete dataset.
+This algorithm is inspired by standard K-Means / KNN clustering. 
+But as anomaly detector is based on repeated classification. 
+Our focus is to make this very efficient with average case time complexity O(N).  
+
+The entier dataset is traversed only once through segments separated by sliding length. 
+For example if length of dataset is 100. 
+Traversal can result into following segments with segment length of 10.  
+S1=[0:10], S2=[10:20], S3=[15:25], S4=[23:33], .. ., Sn=[90:100]  
+Si indicates ith segment  
+and segments can be separated with variable sliding length 
+to account for pattern match with shift (which is discussed in further sections)  
+For example if this results into two clusters:  
+[S1, S3, .. Sn] [S2, S4 .. Sm]  
+The reason why S3 starts from 15 instead of 20 is because pattern [0:10] matches with [15:20]   
+When shifting segment [20:30] backwards to [15:20] prevents forming false clusters and in turn prevents forming false anomaly clusters  
+
+Clustering algorithm works as per below steps to achieve time complexity O(N*C), where N is number of segments, and C is number of clusters  
+
+**Starting with first segment**  
+first segment S1 = [0 : SegmentLength] is used as center of first cluster  
+
+**Classification at ith iteration**  
+Compare ith segment (i from 2 to N) with existing centers 
+starting with clusters sorted with ascending order. 
+This way classification is priotized more for clusters with anomaly size to prevent false anomaly.  
+
+**Maintaining sorted order of clusters**  
+Sorting of clusters should not impact time complexity. 
+If clusters are sorted in ascending order of size. 
+We start with single cluster with S1 on first iteration. 
+On ith iteration if new segment gets classified into cluster at index k  
+Then size of cluster[K] will increase by one, 
+and size of cluster[K+1] can be either equal or more than size of cluste[K], as original cluster distribution is sorted  
+So, we check if size of cluster[K] is increased and swap the two cluster positions along with their respective centers 
+This way sorting order is maintained throught iterations without any extra overhead. 
+This can be illustrated well with below example:  
+Consider set of segments [a,b,a,b,b,c,c,c,c], each character representing segments of particulat pattern.  
+| Iteration        | Cluster Distribution |
+| ----------- | ----------- |
+| 1           | [a]         |
+| 2           | [a], [b]    |
+| 3           | [b], [a,a]  |
+| 4           | [b,b], [a,a] |
+| 5           | [a,a], [b,b,b] |
+| 6           | [c], [a,a], [b,b,b]|
+| 7           | [c,c], [a,a], [b,b,b] |
+| 8           | [a,a], [c,c,c], [b,b,b] |
+| 9           | [a,a], [b,b,b], [c,c,c,c] | 
+
+Notice cluster swapping at iteration 3, 5, 8 and 9
+
+
+And we do not really store complete list of segment in each cluster in the memory. 
+Instead we just store centers and the size of clusters as cluster distribution to achieve good memory optimization. 
+
+
+
+
+
+
+
 
 
 
