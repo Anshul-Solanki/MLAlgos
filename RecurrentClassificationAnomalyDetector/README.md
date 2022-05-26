@@ -19,11 +19,10 @@ Main idea is to perform clustering with dataset of segments.
 Here each cluster would indicate set of segments with similar pattern.
 And segments with anomaly will get separated into clusters of minimal size. 
 So our aim is to find an **Optimal Cluster Distribution** which can result anomaly clusters. 
-This cluster distribution needs to be constructed with precise values of various parameters 
-determining factors which impact the cluster distribution to accurately segregate anomalies 
-So with random values of these parameters in most cases does not result correct anomaly clusters, or even result false anomalies. 
+This cluster distribution is determined by various factors
+and in most cases does not result correct anomaly clusters, or even result false anomalies. 
 These factors include selection of segment length, 
-approach to compute distance between segments, 
+computing distance between segments, 
 and threshold used to classify segments to a cluster based on distance.
 Large segment length can result pattern anomalies, 
 and small segment length can result point anomalies. 
@@ -112,16 +111,45 @@ Consider set of segments [a,b,a,b,b,c,c,c,c], each character representing segmen
 
 Notice cluster swapping at iteration 3, 5, 8 and 9
 
-
 And we do not really store complete list of segment in each cluster in the memory. 
 Instead we just store centers and the size of clusters as cluster distribution to achieve good memory optimization. 
 
+## Optimal Cluster Distribution
 
+The result of clustering algorithm in previous section is a cluster distribution. 
+And next step is to analyze cluster distribution to check whether anomalies can be extracted 
+and changing threshold value in a way that clustering in next iteration has good chance of resulting an optimal cluster distribution.  
 
+With simple observation, we know how changing threshold actually impacts cluster distribution. 
+If threshold is 0, resulting cluster distribution has large number of clusters but with very less size. 
+If threshold is maximum limit, resulting cluster distribution has single cluster with size of complete dataset. 
+This maximum can be easily estimated by aggregating maximum distance of all segments from first segment 
+because first segment is center of first cluster by default.
 
+This shows us the general trend:  
+Large threshold value results small number of clusters with large size  
+Small threshold value results large number of clusters with small size  
 
+None of the above scenario provides optimal cluster distribution  
+This can be best illustrated with below table:  
 
+For constant size of dataset, approx = 500
+| Threshold        | Cluster Distribution | Average cluster size |
+| ----------- | ----------- | ----------|
+| 10          | [200, 150, 70, 20, 15, 15, 10, 5, 5, 5, 3, 1] | 38 |
+| 1000        | [500]                                         | 500 |
+| 100         | [300, 199, 1]                                 | 167 |
 
+From above table, it is not possible to find anomaly clusters for threshold values 10 and 1000.  
+But for threshold = 100, it shows 300 segments of similar pattern, and 199 segments of another similar pattern.  
+The remaining cluster of size = 1 can be considered as anomaly.  
+This is indeed the optimal cluster distribution we want to find.  
 
+Hence, optimal cluster distribution cannot be found using very less or very large value of threshold. 
+But can only be found using an intermediate optimal threshold value.  
+To find this optimal threshold, we cannot simply iterate through all possible values of threshold and do clustering at each step. 
+This will make algorithm too slow.
+Binary search algorithm can be used to do this efficiently. 
 
+## Binary Search to find Optimal Threshold
 
