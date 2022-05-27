@@ -153,3 +153,76 @@ Binary search algorithm can be used to do this efficiently.
 
 ## Binary Search to find Optimal Threshold
 
+General info about Binary Search  
+https://www.hackerearth.com/practice/algorithms/searching/binary-search/tutorial/  
+Binary Search is popular algorithm can be used for searching extremum of unimodal function.  
+
+In order to re-structure our problem of finding optimum threshold similar to extremum of unimodal function.  
+This algorithm needs to converge between minimum threshold value (0) and maximum threshold value, 
+such that we can make decision of increasing threshold limit if it is less than optimal threshold 
+and decrease threshold limit if it is more than optimal threshold. 
+The maximum threshold limit can be minimum value of threshold which classifies all segments into single cluster.  
+Hence we need a rule of convergence.
+
+**Rule of convergence**  
+If minimum threshold limit is = minThresholdLimit
+and maximum threshold limit is = maxThresholdLimit  
+So currentThreshold = (minThresholdLimit + maxThresholdLimit) / 2
+
+General rule of convergence can be if clustering is done using currentThreshold  
+**Case 1**  
+Increase minThresholdLimit = currentThreshold + 1, if resulting cluster distribution is large number of clusters with small sizes  
+**Case 2**  
+Decrease maxThresholdLimit = currentThreshold, if resulting cluster distribution is small number of clusters with large sizes  
+**Case 3**  
+Decrease maxThresholdLimit = currentThreshold, if resulting cluster distribution is optimal  
+As this is optimal cluster distribution, we have some chance of finding anomalies  
+However, we still do not have guarantee to find ALL anomalies  
+Consider below example:  
+| Optimal Threshold        | Cluster Distribution |
+| ----------- | ----------- |
+| 150         | [300, 199, 1] |
+| 120         | [300, 100, 97, 2, 1] |
+
+Optimal Threshold = 150, results 1 anomaly cluster, with 1 anomaly point  
+Optimal Threshold = 120, results 2 anomaly clusters, with 3 anomaly points  
+If dataset has only 1 real anomaly points, then it is included in both cluster distributions. 
+If dataset has 3 real anomaly points, then it is included only in cluster distribution of threshold = 120.  
+
+Hence we can consider threshold=120 as more optimal value, 
+and if real anomaly is only 1 point, then false anomaly can be filtered using technique discussed in further sections  
+And this is reason we should decrease threshold for Case 3 rule of converge.  
+
+**More details on rule of converge**  
+The previous section describes rule of converge, but in abstract way based on 
+*large number of clusters of small sizes* OR 
+*small number of clusters of large sizes* OR 
+*optimal threshold case*.
+More precisely we need exact logic to estimate these cases.  
+
+This is possible using a new parameter called **AnomalyRatio** 
+calculated using formula: 1 / sqrt(size of dataset)  
+The value of AnomalyRatio is rough estimate to make decision if size of Cluster A is very less compared to size of ClusterB 
+only if (size of ClusterA) < (size of ClusterB) * anomalyRatio  
+Taking example to visualize utility:  
+If total dataset size = 100, anomalyRatio = 0.1 consider below cluster distributions  
+CD1 = [50, 30, 20] , avg size = 33  
+CD2 = [50, 45, 5, 5], avg size = 25  
+CD3 = [70, 10, 10, 8, 2], avg size = 20  
+Now, we can make following decisions:  
+for CD1: None of clusters are very less compared to any other cluster  
+for CD2: Clusters of size = 5 are very less compared to cluster of size = 50   
+for CD3: Cluster of size = 2 is very less compared to cluster of size = 70, and it is also very less compared to avg size  
+
+Elaborating Case 1/2/3 of rule of convergence based on AnomalyRatio  
+
+**Case 1**  
+If (average cluster size) < (total size) * anomalyRatio  
+This can be interpreted as: large number of clusters with small size  
+
+**Case 2**  
+If case 1 and 2 are not true  
+This can be interpreted as: small number of clusters with large size  
+
+**Case 3**  
+
