@@ -48,7 +48,7 @@ calculating segment distances with shift.
 | cluster distribution          | Set of cluster sizes and its centers after performing clustering of complete dataset        |
 | optimal cluster distribution  | Ideal cluster distribution where non-anomaly datapoints are classified into clusters of large size, and anomaly clusters of minimal size  |
 | anomalyRatio                  | Used to identify anomaly cluster size as ratio of size to average cluster size in cluster distribution  |
-| threshold                     | maximum distance to the cluster center for segment to be classified into that cluster |
+| threshold                     | distance of segment to the cluster center should be less than or equal to threshold to be classified into cluster |
 | optimal threshold             | optimal value of threshold which gives optimal cluster distribution on clustering for given segment length |
 
 ## Segment length selection
@@ -225,4 +225,38 @@ If case 1 and 2 are not true
 This can be interpreted as: small number of clusters with large size  
 
 **Case 3**  
+This case is valid only if following three conditions are true:  
+-> If at-least one cluster has size less than (average cluster size) * anomalyRatio  
+-> If first condition is false for a cluster, then its size should be at-least more than (total size) * anomalyRatio  
+this means there should not be any clusters of intermediate size, either it should be good anomaly cluster or good non-anmaly cluster  
+-> If sum of anomaly cluster sizes is less than (average cluster size) * anomalyRatio  
+this means there are too many anomalies, which is not generally the case  
+
+"ClusterDistributionHasAnomalies" has code implementation to check Case 3
+
+
+## Computing distance between two segments
+
+Distance calculation is essential to do clustering. Since this is how we know if two segments are similar 
+and should be added to same cluster.  
+
+As we know that a segment is a subarray of timeseries data. So Manhattan distance can be used to compute distance. 
+However we do not know exact length at which particular patter repeates. This may result very high value of Manhattan distance 
+if two segments are exactly same but are shifted by some length.  
+
+Consider timeseries dataset defined by following pattern:  
+X = []  
+&emsp; 	for i in range(1000) :  
+&emsp;&emsp;  		if (i%31 < 17) :  
+&emsp; &emsp;&emsp;  			X.append(80)  
+&emsp;&emsp;  		else:  
+&emsp; &emsp;&emsp;  			X.append(20)  
+
+The pattern repeats at index multiple of 31. Now Manhattan distance between segments 
+X[0:30] and X[33:63] has significant value around 240. But segments are very similar and only shifted by index of 2.  
+Like distance between X[0:30] and X[31:61] is 0.  
+
+
+
+
 
