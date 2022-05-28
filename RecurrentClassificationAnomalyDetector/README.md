@@ -50,6 +50,7 @@ calculating segment distances with shift.
 | anomalyRatio                  | Used to identify anomaly cluster size as ratio of size to average cluster size in cluster distribution  |
 | threshold                     | distance of segment to the cluster center should be less than or equal to threshold to be classified into cluster |
 | optimal threshold             | optimal value of threshold which gives optimal cluster distribution on clustering for given segment length |
+| optimal shift                 | optimal length by which segment should be shifted backwards so that its distance from another segment is minimum (for matching pattern distance) | 
 
 ## Segment length selection
 
@@ -246,15 +247,37 @@ if two segments are exactly same but are shifted by some length.
 
 Consider timeseries dataset defined by following pattern:  
 X = []  
-&emsp; 	for i in range(1000) :  
-&emsp;&emsp;  		if (i%31 < 17) :  
-&emsp; &emsp;&emsp;  			X.append(80)  
-&emsp;&emsp;  		else:  
-&emsp; &emsp;&emsp;  			X.append(20)  
+ 	for i in range(1000) :  
+&emsp;  		if (i%31 < 17) :  
+&emsp;&emsp;  			X.append(80)  
+&emsp;  		else:  
+&emsp;&emsp;  			X.append(20)  
 
 The pattern repeats at index multiple of 31. Now Manhattan distance between segments 
 X[0:30] and X[33:63] has significant value around 240. But segments are very similar and only shifted by index of 2.  
 Like distance between X[0:30] and X[31:61] is 0.  
+Hence we need to account for this shift when calculating distance.  
+
+**Computing segment distance with shift**  
+Consider two segments to compute distance of equal segment length  
+Seg1 = X[start_pos1: end_pos1]  
+Seg2 = X[start_pos2: end_pos2]  
+
+Instead of directly calculating Manhattan distance. 
+We allow Seg2 to shift by some length backwards, and modified Seg2 will be X[start_pos2 - shift: end_pos2 - shift]  
+Brute force way of finding this shift is by keep shifting Seg2 by 1 and calculate distance to Seg1 at each iteration. 
+Optimal shift correponds to minimum distance and this is used as actual distance between segments.  
+
+Maximum shift can be upto limit of (segment length) / 2  
+And segment length can be reduced by half on each iteration of this algorithm. This way possibility is less that we might miss pattern of particular length.  
+For example:  
+If length of pattern is x, and we iterate through segment lengths y and y/2 such that: y > x > y/2  
+Then pattern will get captured by segments of length y, as they can be shifted backwards by y/2 to match the pattern  
+
+Finding optimal shift by iterating from 0 to (segment length)/2 is not efficient approach.  
+
+
+
 
 
 
