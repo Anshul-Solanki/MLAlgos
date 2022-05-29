@@ -282,7 +282,7 @@ Taking example from previous section:
 Seg1 = X[start_pos1: end_pos1]  
 Seg2 = X[start_pos2: end_pos2]  
 
-Objective is to find Seg3 such which is shifted version of Seg2 such that its Manhattan distance from Seg1 is minimum.  
+Objective is to find Seg3 which is shifted version of Seg2 such that its Manhattan distance from Seg1 is minimum.  
 Consider Seg3 = X[start_pos2-shift: end_pos2-shift] = X[start_pos3: end_pos3]  
 also it is given that: shift < (segment length)/2  
 
