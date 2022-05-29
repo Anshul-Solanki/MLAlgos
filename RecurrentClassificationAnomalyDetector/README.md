@@ -71,11 +71,13 @@ Traversal can result into following segments with segment length of 10.
 S1=[0:10], S2=[10:20], S3=[15:25], S4=[23:33], .. ., Sn=[90:100]  
 Si indicates ith segment  
 and segments can be separated with variable sliding length 
-to account for pattern match with shift (which is discussed in further sections)  
+to account for pattern match with shift    
 For example if this results into two clusters:  
 [S1, S3, .. Sn] [S2, S4 .. Sm]  
 The reason why S3 starts from 15 instead of 20 is because pattern [0:10] matches with [15:20]   
 When shifting segment [20:30] backwards to [15:20] prevents forming false clusters and in turn prevents forming false anomaly clusters  
+
+NOTE: More details to calculate segments distance along with shift is discussed in further section.  
 
 Clustering algorithm works as per below steps to achieve time complexity O(N*C), where N is number of segments, and C is number of clusters  
 
@@ -235,8 +237,7 @@ this means there are too many anomalies, which is not generally the case
 
 "ClusterDistributionHasAnomalies" has code implementation to check Case 3
 
-
-## Computing distance between two segments
+## Computing distance between segments
 
 Distance calculation is essential to do clustering. Since this is how we know if two segments are similar 
 and should be added to same cluster.  
@@ -273,8 +274,38 @@ And segment length can be reduced by half on each iteration of this algorithm. T
 For example:  
 If length of pattern is x, and we iterate through segment lengths y and y/2 such that: y > x > y/2  
 Then pattern will get captured by segments of length y, as they can be shifted backwards by y/2 to match the pattern  
+Finding optimal shift by iterating from 0 to (segment length)/2 is not efficient approach. Hence we use ternary search algorithm to find shift in log(N) time complexity.  
 
-Finding optimal shift by iterating from 0 to (segment length)/2 is not efficient approach.  
+## Ternary Search to find optimal shift  
+
+Taking example from previous section:  
+Seg1 = X[start_pos1: end_pos1]  
+Seg2 = X[start_pos2: end_pos2]  
+
+Objective is to find Seg3 such which is shifted version of Seg2 such that its Manhattan distance from Seg1 is minimum.  
+Consider Seg3 = X[start_pos2-shift: end_pos2-shift] = X[start_pos3: end_pos3]  
+also it is given that: shift < (segment length)/2  
+
+As we know the shift indicates that Seg2 is similar to Seg1 but only shifted by some length.  
+Since Seg3 starting from start_pos2-shift results minimum distance from Seg1 due to pattern matching. Shifting Seg3 either direction will increase its distance from Seg1.  
+
+
+If Seg3 is shifted by length k to either directions.  
+and consider Dist(Seg1, Seg3) is distance from Seg1 and Seg3.  
+Then below inequalit holds true:  
+Dist(Seg1, X[start_pos3-k: end_pos3-k]) > Dist(Seg1, X[start_pos3: end_pos3]) < Dist(Seg1, X[start_pos3+k: end_pos3+k])  
+As the value of k increase, the distance would further increase from Seg1  
+If k is increased to greater value k2  
+then,  
+Dist(Seg1, X[start_pos3-k2: end_pos3-k2]) > Dist(Seg1, X[start_pos3-k: end_pos3-k])  
+Dist(Seg1, X[start_pos3+k2: end_pos3+k2]) > Dist(Seg1, X[start_pos3+k: end_pos3+k])  
+
+Hence, the relation of segment distance and shift 'k' can be visualizes as unimodel function.  
+However this will only work for certain maximum limit of k, after which pattern starts to repeat again.  
+And since we do not know this maximum limit, the distance-to-shift realtion could have multiple minima.  
+
+
+
 
 
 
