@@ -309,7 +309,7 @@ And if minima exists at p which is between 0 - maximum value of k
 
 Using ternary search we compute segment distance with following shift values:  
 a = 0  
-b = (maximum shift) / 3
+b = (maximum shift) / 3  
 c = 2*(maximum shift) / 3  
 d = maximum shift  
 And if corresponding distance with shifts are: adist, bdist, cdist and ddist   
