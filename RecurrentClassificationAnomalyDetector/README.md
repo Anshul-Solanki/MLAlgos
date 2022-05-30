@@ -338,9 +338,28 @@ if a < b :
 
 Above Rule of converge can be visualized as unimodel function of distance-shift with following possibilities:  
 
+#1 When optimal shift is between a and b  
+Condition: bdist < cdist  
+Converge: d = c  
+<img src="../Images/bdist_converge.png" width=700 >  
+
+#2 When optimal shift is between b and c  
+Condition: bdist and cdist has not relation  
+Converge: a = b OR d = c (we do not loose minima in either case as it is still in between b and c, and will get correctly converged in next iteration)  
+<img src="../Images/bcdist_converge.png" width=700 >  
+
+#3 When optimal shift is between c and d  
+Condition: bdist > cdist  
+Converge: a = b  
+<img src="../Images/cdist_converge.png" width=700 >  
+
+#4 When adist is minimum, but represents false minima. Hence we do not converge to a OR d  
+This is the reason we do not converge to a OR d, instead convergence is done only based on bdist and cdist  
+<img src="../Images/adist_converge.png" width=700 >  
+
 This rule of convergence is applicable even if we have multiple minimas within maximum shift  
 Because as we converge we keep reducing the shift window, and there should be at-least one window which would accomodate only single minima  
-And this is when is successfully converge to most optimal shift  
+And this is when we successfully converge to most optimal shift  
 
 ## Revisiting segment selection for clustering  
 
