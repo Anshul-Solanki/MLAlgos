@@ -406,7 +406,9 @@ class RecurrentClassificationAnomalyDetector () :
 					d = c
 				else :
 					a = b
-			# means a = b
+			# in this case a = b
+			# resulting values of a,b,c,d can be: a,a,a+1,a+2 OR a,a,a,a+1
+			# hence we can safely converge to single point corresponding to minimum distance
 			else :
 				if bDist <= cDist and bDist <= dDist :
 					d = a # converge to a
