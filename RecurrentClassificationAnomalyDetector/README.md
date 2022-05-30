@@ -282,7 +282,7 @@ Taking example from previous section:
 Seg1 = X[start_pos1: end_pos1]  
 Seg2 = X[start_pos2: end_pos2]  
 
-Objective is to find Seg3 which is shifted version of Seg2 such that its Manhattan distance from Seg1 is minimum.  
+Objective is to find Seg3 such which is shifted version of Seg2 such that its Manhattan distance from Seg1 is minimum.  
 Consider Seg3 = X[start_pos2-shift: end_pos2-shift] = X[start_pos3: end_pos3]  
 also it is given that: shift < (segment length)/2  
 
@@ -300,9 +300,51 @@ then,
 Dist(Seg1, X[start_pos3-k2: end_pos3-k2]) > Dist(Seg1, X[start_pos3-k: end_pos3-k])  
 Dist(Seg1, X[start_pos3+k2: end_pos3+k2]) > Dist(Seg1, X[start_pos3+k: end_pos3+k])  
 
-Hence, the relation of segment distance and shift 'k' can be visualizes as unimodel function.  
+Hence, the relation of segment distance and shift 'k' can be visualized as unimodel function.  
 However this will only work for certain maximum limit of k, after which pattern starts to repeat again.  
 And since we do not know this maximum limit, the distance-to-shift realtion could have multiple minima.  
+
+For simplicity, lets assume that maximum value of k (which is (segment length)/2) has only one minima.  
+And if minima exists at p which is between 0 - maximum value of k  
+
+Using ternary search we compute segment distance with following shift values:  
+a = 0  
+b = (maximum shift) / 3
+c = 2*(maximum shift) / 3  
+d = maximum shift  
+And if corresponding distance with shifts are: adist, bdist, cdist and ddist  
+
+The unimodel function of distance-shift has following possibilities:  
+
+**Rule of convergence**  
+Check this method in code: 'GetManhattanDistAndShift'  
+
+if a < b :  
+&emsp;				# converge only based on minima found in between window  
+&emsp;				# minimas at end of windows might be false positive in case window length is more than pattern length  
+&emsp;				if bDist <= cDist :  
+&emsp;&emsp;					d = c  
+&emsp;				else :  
+&emsp;&emsp;					a = b  
+			# in this case a = b  
+			# resulting values of a,b,c,d can be: a,a,a+1,a+2 OR a,a,a,a+1  
+			# hence we can safely converge to single point corresponding to minimum distance  
+			else :  
+&emsp;				if bDist <= cDist and bDist <= dDist :  
+&emsp;&emsp;					d = a # converge to a   
+&emsp;				elif cDist <= dDist :  
+&emsp;&emsp;					a = c # converge to c  
+&emsp;&emsp;					d = c   
+&emsp;				else :  
+&emsp;&emsp;					a = d   
+
+This rule of convergence is applicable even if we have multiple minimas within maximum shift  
+Because as we converge we keep reducing the shift window, and there should be at-least one window which would accomodate only single minima  
+And this is when is successfully converge to most optimal shift  
+
+## Revisiting segment selection for clustering  
+
+With the knowledge of optimal shift calculation, we can correctly show which segments are choosen as part of dataset to apply clustering.  
 
 
 
