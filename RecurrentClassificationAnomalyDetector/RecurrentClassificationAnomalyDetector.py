@@ -401,7 +401,7 @@ class RecurrentClassificationAnomalyDetector () :
 
 			if a < b :
 				# converge only based on minima found in between window
-				# minimas at end of windows might be false positive
+				# minimas at end of windows might be false positive in case window length is more than pattern length
 				if bDist <= cDist :
 					d = c
 				else :
