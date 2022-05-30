@@ -312,9 +312,7 @@ a = 0
 b = (maximum shift) / 3
 c = 2*(maximum shift) / 3  
 d = maximum shift  
-And if corresponding distance with shifts are: adist, bdist, cdist and ddist  
-
-The unimodel function of distance-shift has following possibilities:  
+And if corresponding distance with shifts are: adist, bdist, cdist and ddist   
 
 **Rule of convergence**  
 Check this method in code: 'GetManhattanDistAndShift'  
@@ -337,6 +335,8 @@ if a < b :
 &emsp;&emsp;					d = c   
 &emsp;				else :  
 &emsp;&emsp;					a = d   
+
+Above Rule of converge can be visualized as unimodel function of distance-shift with following possibilities:  
 
 This rule of convergence is applicable even if we have multiple minimas within maximum shift  
 Because as we converge we keep reducing the shift window, and there should be at-least one window which would accomodate only single minima  
