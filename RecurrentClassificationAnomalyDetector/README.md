@@ -363,9 +363,41 @@ And this is when we successfully converge to most optimal shift
 
 ## Revisiting segment selection for clustering  
 
-With the knowledge of optimal shift calculation, we can correctly show which segments are choosen as part of dataset to apply clustering.  
+With the knowledge of optimal shift calculation, we can exactly show which segments are choosen as part of dataset to apply clustering.  
+Idea is to select shifted segments separated by length of segment length.  
+This can be best understood with pseudo code below:  
 
+start_pos = 0  
+next_start_pos = 0  
+while (start_pos < len(X) - segmentLen) :   
+&emsp; if (start_pos > next_start_pos) :  
+&emsp;&emsp;	start_pos = next_start_pos  
+&emsp;&emsp;	next_start_pos = next_start_pos + segmentLen  
+&emsp;	elif (start_pos == next_start_pos) :  
+&emsp;&emsp;	next_start_pos = next_start_pos + segmentLen  
+&emsp; mshift = (code to get optimal shift corresponding to start_pos)  
+&emsp; start_pos = start_pos - mshift  
+&emsp; (code to classify current segment starting from start_pos + segment length to clusters)  
+&emsp; start_pos = start_pos + segment length	
+	
+Check below image to visualize segment selection algorithm  
+<img src="../Images/SegmentSelection.png" width=1000 >  
 
+Note that segment selection algorithm is based on two conditions:  
+Condition1: We want to select shifted segments at each index = m * segment length  
+Condition2: Also explore segments from shifted segments separated by segment length  
+
+Condition2 ensures selection of segments of similar pattern are preferred.  
+But Condition2 alone will not fetch ideal set of segments, and can potentially result skewed dataset when starting segment is treated as anomaly 
+because other segments are adjusted well to form large clusters, OR in case pattern changes at some point.  
+Hence we need Condition1 to ensure we do not always select segments of particular pattern, instead select at all index = m * segment length 
+when moving forward  
+
+In short, Condition1 creates uniform randomness, and Condition2 creates pattern based selection.  
+Expectation is segments of Condition1 will get uniformly classified into clusters.  
+And segments of Condition2 will get classified into clusters indicating strong patterns.  
+
+Next step is to apply clustering algorithm which is already discussed in previous section.
 
 
 
