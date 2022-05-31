@@ -361,7 +361,7 @@ This rule of convergence is applicable even if we have multiple minimas within m
 Because as we converge we keep reducing the shift window, and there should be at-least one window which would accomodate only single minima  
 And this is when we successfully converge to most optimal shift  
 
-## Revisiting segment selection for clustering  
+## Segment selection algorithm for clustering  
 
 With the knowledge of optimal shift calculation, we can exactly show which segments are choosen as part of dataset to apply clustering.  
 Idea is to select shifted segments separated by length of segment length.  
