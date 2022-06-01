@@ -443,6 +443,8 @@ class RecurrentClassificationAnomalyDetector () :
 
 			c1 = min(centers[centerIndex], centers[i])
 			c2 = max(centers[centerIndex], centers[i])
+
+			# this has scope of improvement as anomalyRatio could be negligible for small segmentLen 
 			if (RecurrentClassificationAnomalyDetector.CompareManhattanDist(X, c1, c2, segmentLen, threshold*(1 + anomalyRatio))) :
 				print("found false anomaly", centers[i], centers[centerIndex], threshold, threshold*(1 + anomalyRatio))
 				result = True
