@@ -379,7 +379,27 @@ while (start_pos < len(X) - segmentLen) :
 &emsp; start_pos = start_pos - mshift  
 &emsp; start_pos = start_pos + segment length	
 	
-Check below image to visualize segment selection algorithm  
+Check below image to visualize segment selection algorithm:  
+Time series dataset can be stored as array X[]. The horizontal line represents array indices starting with 0 at right end and increasing towards right direction. 
+Hence array index P can be located on line at length=P in right direction.  
+
+* A segment can be identified just by it start position with constant length of segmentLen (which is fixed at this iteration)  
+* Initialize start_pos = 0 and next_start_pos = 0
+* Select first segment starting at index S=0. And use it as first center of first cluster by default.  
+* Current value of start_pos = 0 and next_start_pos = segmentLen    
+* Temporatily select second segment at index S1=segmentLen, try doing classification based on existing cluster, if not create new center of new cluster.  
+* If we found shift doing clssification of S1, then select segment starting from index S1D = S1 - shift, and use it as real second segment.  
+* In parallel keep track of next_start_pos which increments with segmentLen whenever current start_pos is greater than or equals to current next_start_pos.  
+* Current value of start_pos = S1D, next_start_pos = segmentLen (as start_pos < next_start_pos)  
+* Temporatily select next segment at index S1D1 = S1D + segmentLen, and compute shift after performing clustering  
+* Again reduce shift and use real next segment starting at index S1D1D = S1D1 - shift  
+* Current value of start_pos = S1D1D, next_start_pos = 2 * segmentLen  
+* Select next segment starting at index start_pos = S1D1D + segmentLen  
+* But this time start_pos > next-start_pos, so update start_pos = next_start_pos = S2 and compute shift after performing clustering  
+* Again reduce shift and use real next segment starting at index S2D = S2 - shift  
+* Keep repeating all steps above until we read end where start_pos + segmentLen >= len(X)  
+* Note that the selected segments can be identified as points enclosed with green circle from image    
+
 <img src="../Images/SegmentSelection.png" width=1000 >  
 
 Note that segment selection algorithm is based on two conditions:  
