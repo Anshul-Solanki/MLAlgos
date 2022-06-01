@@ -375,9 +375,8 @@ while (start_pos < len(X) - segmentLen) :
 &emsp;&emsp;	next_start_pos = next_start_pos + segmentLen  
 &emsp;	elif (start_pos == next_start_pos) :  
 &emsp;&emsp;	next_start_pos = next_start_pos + segmentLen  
-&emsp; mshift = (code to get optimal shift corresponding to start_pos)  
+&emsp; mshift = (code to get optimal shift corresponding to classification of segment starting from start_pos + segment length to clusters)  
 &emsp; start_pos = start_pos - mshift  
-&emsp; (code to classify current segment starting from start_pos + segment length to clusters)  
 &emsp; start_pos = start_pos + segment length	
 	
 Check below image to visualize segment selection algorithm  
