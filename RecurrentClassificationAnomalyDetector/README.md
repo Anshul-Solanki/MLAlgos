@@ -419,6 +419,14 @@ And segments of Condition2 will get classified into clusters indicating strong p
 Next step is to apply clustering algorithm which is already discussed in previous section.
 
 
+## Finding anomaly points  
+
+As the objective is to find optimal threshold corresponding to optimal cluster distribution, going through the process of recurrent classification. 
+We may or may not find optimal threshold for particular segment length provided if dataset actually has anomalies.  
+If optimal threshold is found then we aggregate all segments which belong to clusters with anomaly size. 
+But since cluster distribution only has information of cluster centers and cluster sizes.  
+We do not actually store segment data into clusters for memory optimization.  
+
 
 
 
