@@ -476,7 +476,22 @@ As the objective is to find optimal threshold corresponding to optimal cluster d
 We may or may not find optimal threshold for particular segment length provided if dataset actually has anomalies.  
 If optimal threshold is found then we aggregate all segments which belong to clusters with anomaly size. 
 But since cluster distribution only has information of cluster centers and cluster sizes.  
-We do not actually store segment data into clusters for memory optimization.  
+So We do not actually store list of segments into clusters for memory optimization. 
+However clustering algorithm is idempotent for same values of segmentLength and threshold. 
+Clustering can be performed again with optimal threshold, but this time storing all the segments which belong to clusters of anomaly size. 
+These segments can be called anomaly segments.  
+
+Next step is to filter the list of anomaly segments and compare them again with non-anomaly clusters, but with bit higher threshold (example 1.5 * threshold)  
+This filtering is necessary because anomaly segments might have slightly more distance from non-anomaly clusters, and could result false anomaly result. 
+Hence these segments are removed from list of anomaly segments.  
+
+**Estimating points of anomalies**  
+Consider we get list of anomaly segments [AS1, AS2, AS3 ..] for certain value of segmentLength and optimal threshold. 
+Anomaly points are estimated to be present at mid point of each segment, 
+and filtering out the duplicate points by selecting them at-least at length of segmentLength.  
+
+
+
 
 
 
