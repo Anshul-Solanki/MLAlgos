@@ -361,6 +361,57 @@ This rule of convergence is applicable even if we have multiple minimas within m
 Because as we converge we keep reducing the shift window, and there should be at-least one window which would accomodate only single minima  
 And this is when we successfully converge to most optimal shift  
 
+## Testing ternary search algorithm on sample dataset to find optimal shift  
+
+Consider timeseries dataset defined by following pattern:  
+X = []  
+ 	for i in range(10000) :  
+&emsp;  		if (i%310 < 170) :  
+&emsp;&emsp;  			X.append(80)  
+&emsp;  		else:  
+&emsp;&emsp;  			X.append(20)  
+
+Dataset clearly indicates strong patterns repeating at interval of 310.  
+
+And consider two segments starting at start_pos1 = 200 and start_pos2 = 1000 with segmentLength = 500  
+Executing distance calculation with optimal shift with below code:  
+dist, shift = RecurrentClassificationAnomalyDetector.GetManhattanDistAndShift(X, start_pos1, start_pos2, segmentLen)  
+
+Result is:  
+distance = 0, shift = 180  
+distance is 0 because both the segments are totally identical only shifted by length = 180  
+This can be proved checking modulo values:  
+200 % 310 = 200  
+1000 % 310 = 70  
+When second segment is shifted by 180 towards left, then:  
+new value of start_pos2 = 1000 - 180 = 820  
+and 820 % 310 = 200 (which is same for first segment)  
+Hence by shifting second segment, it gets perfectly aligned with first segment and results distance as 0.  
+This is much better than simply computing distance without shift, which would result high distance value, and wrongly indicating that segments are different.  
+
+Below table shows convergence at each iteration, starting with minimum shift limit as 0 and maximum shift limit as segmentLen/2 = 250:  
+
+| a,adist     | b,bdist     | c,cdist     | d,ddist     |
+| ----------- | ----------- | ----------- | ----------- |
+| 0 , 26400 | 83 , 17880 | 166 , 2520 | 250 , 15000 |
+| 83 , 17880 | 138 , 7560 | 194 , 2520 | 250 , 15000 |
+| 138 , 7560 | 175 , 900 | 212 , 5880 | 250 , 15000 |
+| 138 , 7560 | 162 , 3240 | 187 , 1260 | 212 , 5880 |
+| 162 , 3240 | 178 , 360 | 195 , 2700 | 212 , 5880 |
+| 162 , 3240 | 173 , 1260 | 184 , 720 | 195 , 2700 |
+| 173 , 1260 | 180 , 0 | 187 , 1260 | 195 , 2700 |
+| 173 , 1260 | 177 , 540 | 182 , 360 | 187 , 1260 |
+| 177 , 540 | 180 , 0 | 183 , 540 | 187 , 1260 |
+| 177 , 540 | 179 , 180 | 181 , 180 | 183 , 540 |
+| 177 , 540 | 178 , 360 | 179 , 180 | 181 , 180 |
+| 178 , 360 | 179 , 180 | 180 , 0 | 181 , 180 |
+| 179 , 180 | 179 , 180 | 180 , 0 | 181 , 180 |
+| 180 , 0   | 180 , 0   | 180 , 0 | 180 , 0   |
+
+This validates rule of convergence of previous section.  
+So optimal shift is converged only in 14 iterations. This would have taken 180 iterations without using ternary search algorithm. 
+Because given an unkonwn dataset we do not know pattern length and only option would be to explore the complete window of length = segmentLen/2 towards left direction of second segment.  
+
 ## Segment selection algorithm for clustering  
 
 With the knowledge of optimal shift calculation, we can exactly show which segments are choosen as part of dataset to apply clustering.  
