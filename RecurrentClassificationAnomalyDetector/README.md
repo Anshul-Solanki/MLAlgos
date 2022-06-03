@@ -490,11 +490,55 @@ Consider we get list of anomaly segments [AS1, AS2, AS3 ..] for certain value of
 Anomaly points are estimated to be present at mid point of each segment, 
 and filtering out the duplicate points by selecting them at-least at length of segmentLength.  
 
+## Testing this model on sample datasets  
 
+**Dataset with strong pattern**  
+Using timeseries data with regular pattern at length=31 with below code:  
+X = []  
+for i in range(1000) :  
+&emsp;	if (i > 100 and i < 105):  
+&emsp;&emsp;		X.append(20)  
+&emsp;	elif (i > 200 and i < 205):  
+&emsp;&emsp;		X.append(80)  
+&emsp;	elif (i%31 < 17) :  
+&emsp;&emsp;		X.append(80)  
+&emsp;	else:  
+&emsp;&emsp;		X.append(20)   
 
+Notice anomaly is injected at 100-105 and 200-205  
 
+<img src="../Images/TimeSeriesDataset1.PNG" width=1000 height=500>  
 
+Result:  
+Found anomaly points [112.0, 236.0] for segment length = 100  
+Found anomaly points [93.5] for segment length = 25  
 
+**Dataset with spike anomalies**  
+
+<img src="../Images/TimeSeriesDataset_WithSpikes.PNG" width=1000 height=500>  
+
+Result:  
+Found anomaly points [] for segment length = 100  
+Found anomaly points [] for segment length = 25  
+Found anomaly points [1271.0, 1284.0, 1310.0] for segment length = 12  
+Found anomaly points [1269.5, 2968.5] for segment length = 3  
+Found anomaly points [1270.5, 2969.5] for segment length = 1  
+
+**Datasets with anomaly due to pattern change**  
+
+<img src="../Images/TimeseriesDataset_FlatMiddle.PNG" width=1000 height=500>  
+
+Found anomaly points [2735.5] for segment length = 403  
+
+<img src="../Images/TimeseriesDataset_JumpsDown.PNG" width=1000 height=500>  
+
+Found anomaly points [3022.5] for segment length = 403  
+
+<img src="../Images/TimeSeriesDataset_JumpsUp.PNG" width=1000 height=500>  
+
+Found anomaly points [3099.0] for segment length = 100  
+
+**Notice that pattern anomalies are found with large segment lengths and spike anomalies are found with small segment length**
 
 
 
