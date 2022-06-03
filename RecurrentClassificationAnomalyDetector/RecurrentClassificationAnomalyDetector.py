@@ -210,7 +210,8 @@ class RecurrentClassificationAnomalyDetector () :
 					print(*trueAnomalies)
 				'''
 
-				anomalyPoints.append(trueAnomalies)
+				txt = "Found anomaly points {points} for segment length = {segmentLen}".format(points = trueAnomalies, segmentLen = segmentLen)
+				anomalyPoints.append(txt)
 
 			# reduce segment length for next iteration
 			segmentLen = int(segmentLen * 0.5)
@@ -428,7 +429,7 @@ class RecurrentClassificationAnomalyDetector () :
 		dist = 0
 
 		for i in range(segmentLen) :
-			dist = dist + abs(X[seg1_start+i] - X[seg2_start+i-shift]) # when using df try not to use list
+			dist = dist + abs(X[seg1_start+i][0] - X[seg2_start+i-shift][0]) # when using df try not to use list
 
 		return dist
 
@@ -495,13 +496,13 @@ class RecurrentClassificationAnomalyDetector () :
 
 # test code
 def main() :
-	#df = pd.read_csv ("anomalyDatasets\\art_daily_jumpsdown.csv") 
-	#df = pd.read_csv ("anomalyDatasets\\ec2_cpu_utilization_5f5533.csv") 
-	#df = pd.read_csv ("anomalyDatasets\\art_daily_flatmiddle.csv") 
-	#df = pd.read_csv ("anomalyDatasets\\art_daily_jumpsup.csv") 
+	df = pd.read_csv ("SampleTimeSeriesDatasets\\datasetWithSpikeAnomalies.csv") 
+	#df = pd.read_csv ("SampleTimeSeriesDatasets\\dataset_flatmiddle.csv") 
+	#df = pd.read_csv ("SampleTimeSeriesDatasets\\dataset_jumpsdown.csv") 
+	#df = pd.read_csv ("SampleTimeSeriesDatasets\\dataset_jumpsup.csv") 
 
-	#X = df.values.tolist()
-
+	X = df.values.tolist()
+	'''
 	X = []
 	for i in range(1000) :
 		if (i > 100 and i < 105):
@@ -512,9 +513,10 @@ def main() :
 			X.append(80)
 		else:
 			X.append(20)
+	'''
 
 	anomalyPoints = RecurrentClassificationAnomalyDetector.FindAnomalyPoints(X)
-	print(*anomalyPoints)
+	print(*anomalyPoints, sep = "\n")
 
 	plt.plot(X)
 	plt.show()
