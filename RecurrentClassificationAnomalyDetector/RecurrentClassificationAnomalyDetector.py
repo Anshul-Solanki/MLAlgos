@@ -308,7 +308,6 @@ class RecurrentClassificationAnomalyDetector () :
 
 			start_pos = start_pos + segmentLen
 
-			'''
 			# Optimization: 
 			# check if this intermediate cluster distribution has too many clusters (which generally has small segment lengths)
 			# Return intermediate result at this point without running complete algorithm 
@@ -320,7 +319,6 @@ class RecurrentClassificationAnomalyDetector () :
 				break
 			# the above check is sufficient to declare that cluster distribution is not optimal, and has too many clusters
 			# because if we continue running algorithm, len(centers) will increase, resulting value of (avgClusterSize * anomalyRatio) to be even smaller
-			'''
 
 		return clusterSizes, centers, anomalyPoints
 
