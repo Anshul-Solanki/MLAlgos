@@ -96,6 +96,9 @@ Note: this would work even for small scale patterns as we will keep reducing win
 
 5/18
 maybe create cluster distribution arranged in increasing size of clusters? to ensure anomaly centers are real anomalies?
+
+6/4
+Add a readme section for time complexity of this model
 '''
 
 import numpy as np
@@ -223,7 +226,7 @@ class RecurrentClassificationAnomalyDetector () :
 	@staticmethod
 	def GetClusterDistribution (X, segmentLen, threshold) :
 		nonAnomalyCenters = []
-		centers, clusterSizes, ingnore = RecurrentClassificationAnomalyDetector.GetClusterDistributionAndAnomalyPoints(X, segmentLen, threshold, nonAnomalyCenters)
+		centers, clusterSizes, ignore = RecurrentClassificationAnomalyDetector.GetClusterDistributionAndAnomalyPoints(X, segmentLen, threshold, nonAnomalyCenters)
 
 		return centers, clusterSizes
 
@@ -304,6 +307,20 @@ class RecurrentClassificationAnomalyDetector () :
 					anomalyPoints.append(start_pos)
 
 			start_pos = start_pos + segmentLen
+
+			'''
+			# Optimization: 
+			# check if this intermediate cluster distribution has too many clusters (which generally has small segment lengths)
+			# Return intermediate result at this point without running complete algorithm 
+			totalNumberOfSegments = len(X) 
+			# totalNumberOfSegments is estimated max value for small segment length
+			anomalyRatio = 1 / math.sqrt(totalNumberOfSegments)
+			avgClusterSize = totalNumberOfSegments / len(centers)
+			if (avgClusterSize * anomalyRatio < 1) :
+				break
+			# the above check is sufficient to declare that cluster distribution is not optimal, and has too many clusters
+			# because if we continue running algorithm, len(centers) will increase, resulting value of (avgClusterSize * anomalyRatio) to be even smaller
+			'''
 
 		return clusterSizes, centers, anomalyPoints
 
@@ -496,10 +513,10 @@ class RecurrentClassificationAnomalyDetector () :
 
 # test code
 def main() :
-	df = pd.read_csv ("SampleTimeSeriesDatasets\\datasetWithSpikeAnomalies.csv") 
+	#df = pd.read_csv ("SampleTimeSeriesDatasets\\datasetWithSpikeAnomalies.csv") 
 	#df = pd.read_csv ("SampleTimeSeriesDatasets\\dataset_flatmiddle.csv") 
 	#df = pd.read_csv ("SampleTimeSeriesDatasets\\dataset_jumpsdown.csv") 
-	#df = pd.read_csv ("SampleTimeSeriesDatasets\\dataset_jumpsup.csv") 
+	df = pd.read_csv ("SampleTimeSeriesDatasets\\dataset_jumpsup.csv") 
 
 	X = df.values.tolist()
 	'''
@@ -518,8 +535,8 @@ def main() :
 	anomalyPoints = RecurrentClassificationAnomalyDetector.FindAnomalyPoints(X)
 	print(*anomalyPoints, sep = "\n")
 
-	plt.plot(X)
-	plt.show()
+	#plt.plot(X)
+	#plt.show()
 
 if __name__ == "__main__" :	
 	main()
