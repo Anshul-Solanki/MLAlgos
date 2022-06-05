@@ -490,6 +490,104 @@ Consider we get list of anomaly segments [AS1, AS2, AS3 ..] for certain value of
 Anomaly points are estimated to be present at mid point of each segment, 
 and filtering out the duplicate points by selecting them at-least at length of segmentLength.  
 
+## Time Complexity analysis  
+
+Consider total size of timeseries dataset as N  
+Analysis can be done using pseudocode below:  
+
+Iterate through segment lengths starting with N/10 and reducing by half on each iteration  
+&emsp; For each segmentLen:  
+&emsp; Find optimal threshold by iterating through threshold between 0 to MaxThreshold using binary search  
+&emsp; &emsp; For each threshold:  
+&emsp;&emsp;&emsp; Find cluster distribution (which will be in turn used to converge binary search)
+
+Hence overall time complexity =  
+(time complexity of segment length iteration)  *
+(time complexity of threshold iteration)  *
+(time complexity of clustering)  
+
+where:  
+time complexity of segment length iteration = log(N)  
+time complexity of threshold iteration = log(T)  
+Where T is max threshold, and its value is arbitary which depends on dataset variance and proportional to segment length  
+
+Time complexity of clustering can be further divided into:  
+time complexity of clustering =  
+(time complexity of iterating through segments and comparing them with each centers) *  
+(time complexity to compute distance between two segments)  
+
+Time complexity of clustering varies with different values of segment lengths  
+Consider 3 cases below:  
+
+**When segment length is large**  
+In this case segment length is comparable to N  
+And since segment length is large we get less number of segments  
+so, time complexity of iterating through segments and comparing them with each centers = c (constant)  
+time complexity to compute distance between two segments =  
+(time complexity of iterating through each point of two segments) *  
+(time complexity of converging optimal shift using ternary search)  
+Hence,  
+time complexity to compute distance between two segments = N * log(N)  
+And,  
+time complexity of clustering with large segment length = c * N * log(N) = N * log(N)  
+
+**When segment length is small**  
+In this case segment length << N  
+So expect large number of clusters (in worst case) ~= N  
+time complexity of iterating through segments and comparing them with each centers = N<sup>2</sup>  
+
+We optimize this by limiting the maximum number of clusters because very large number of clusters will never lead to optimal cluster distribution:  
+If number of clusters = M  
+total number of segments ~= N  
+then,  
+AverageClusterSize = N / M  
+AnomalyRatio = 1 / (N)<sup>1/2</sup>  
+AnomalyClusterSize = (AverageClusterSize) * (AnomalyRatio) = N<sup>1/2</sup> / M  
+And,  
+AnomalyClusterSize >= 1 (to find anomalies!)  
+so,  
+(N)<sup>1/2</sup> / M >= 1  
+Hence, maximum value of M (number of clusters) = (N)<sup>1/2</sup>  
+
+so new time complexity of iterating through segments and comparing them with each centers = N * N<sup>1/2</sup> = N<sup>3/2</sup>  
+And,
+time complexity to compute distance between two segments = c (as segment length is too small)  
+Hence,  
+time complexity of clustering with small segment length = c * N<sup>3/2</sup> = N<sup>3/2</sup>  
+
+**When segment length is intermediate**  
+This is the case where both (time complexity of iterating through segments) and (time complexity to compute distance between two segments) are significant but not comparable to N  
+So, in this case segment length can be assumed to be ~= (N)<sup>1/2</sup>  
+time complexity of iterating through segments and comparing them with each centers = N<sup>3/4</sup>  
+and,  
+time complexity to compute distance between two segments = N<sup>1/2</sup> * log(N<sup>1/2</sup>)  
+Hence,  
+time complexity of clustering with intermediate segment length = N<sup>5/4</sup> * log(N<sup>1/2</sup>)  
+
+**Generic time complexity of clustering**  
+Since we have time complexity for 3 cases above, we can try to find unified value.  
+Consider below estimations:  
+large segment length > N<sup>1/2</sup> > intermediate segment length > log(N) > small segment length  
+Hence,  
+Generic time complexity of clustering =  
+( (N-N<sup>1/2</sup>) * (time complexity of clustering with large segment length) ) / (N + N<sup>1/2</sup> + log(N)) +  
+( (N<sup>1/2</sup> - log(N) ) * (time complexity of clustering with intermediate segment length) / (N + N<sup>1/2</sup> + log(N)) +  
+( log(N) * (time complexity of clustering with small segment length) / (N + N<sup>1/2</sup> + log(N))  
+
+Now doing some mathematical derivations using the values optained from 3 cases above to the generic time complexity equation and 
+keeping only the dominant terms.  
+The generic time complexity of clustering = N * log(N)  
+
+**Overall time complexity**  
+Hence overall time complexity =  
+(time complexity of segment length iteration)  *
+(time complexity of threshold iteration)  *
+(time complexity of clustering) 
+
+putting the estimated values, we get:  
+overall time complexity = N * (log(N))<sup>2</sup> * log(T)  
+
+
 ## Testing this model on sample datasets  
 
 **Dataset with strong pattern**  
