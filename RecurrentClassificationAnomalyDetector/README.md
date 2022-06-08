@@ -574,6 +574,10 @@ Hence overall time complexity =
   
 overall time complexity = O(N<sup>3/2</sup> * log(N) * log(T))  
 
+## Space complexity  
+If N is the size of dataset.  
+The only intermediate objects we store at each iteration is the cluster distribution which only has the information of centers indices and size of clusters.  
+So overall space complexity is O(N)  
 
 ## Testing this model on sample datasets  
 
