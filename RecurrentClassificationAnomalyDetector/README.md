@@ -564,28 +564,15 @@ time complexity to compute distance between two segments = N<sup>1/2</sup> * log
 Hence,  
 time complexity of clustering with intermediate segment length = N<sup>5/4</sup> * log(N<sup>1/2</sup>)  
 
-**Generic time complexity of clustering**  
-Since we have time complexity for 3 cases above, we can try to find unified value.  
-Consider below estimations:  
-large segment length > N<sup>1/2</sup> > intermediate segment length > log(N) > small segment length  
-Hence,  
-Generic time complexity of clustering =  
-( (N-N<sup>1/2</sup>) * (time complexity of clustering with large segment length) ) / (N + N<sup>1/2</sup> + log(N)) +  
-( (N<sup>1/2</sup> - log(N) ) * (time complexity of clustering with intermediate segment length) / (N + N<sup>1/2</sup> + log(N)) +  
-( log(N) * (time complexity of clustering with small segment length) / (N + N<sup>1/2</sup> + log(N))  
+**Overall worst case time complexity**  
+Among the three cases above the worst case time complexity for clustering is for segment of small length = N<sup>3/2</sup>  
 
-Now doing some mathematical derivations using the values optained from 3 cases above to the generic time complexity equation and 
-keeping only the dominant terms.  
-The generic time complexity of clustering = N * log(N)  
-
-**Overall time complexity**  
 Hence overall time complexity =  
 (time complexity of segment length iteration)  *
 (time complexity of threshold iteration)  *
-(time complexity of clustering) 
-
-putting the estimated values, we get:  
-overall time complexity = N * (log(N))<sup>2</sup> * log(T)  
+(worst case time complexity of clustering) 
+  
+overall time complexity = O(N<sup>3/2</sup> * log(N) * log(T))  
 
 
 ## Testing this model on sample datasets  
