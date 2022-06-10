@@ -44,7 +44,7 @@ The best way is to find middle point on line joining C1 to C2, dividing line by 
 This radius could represent variance of cluster but in direction of vector C1-C2.
 Hyperplane passing through this middle point can be used to find most optimal boundary to seperate clusters.
 
-Radius of each cluster is computed as mean distance of datapoints from center in direction of vector C1-C2
+Radius of each cluster is computed as mean distance of datapoints from center in direction of vector C1-C2.
 For a particular datapoint PC1, this distance is absoulte value of dot product of below vectors:  
 distance = abs( (C1 - C2).dot(C1 - PC1) )  
 
