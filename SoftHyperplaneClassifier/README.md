@@ -3,7 +3,7 @@
 
 This is machine learning model for binary class prediction of linearly separable data similar to standard models like Logistic Regression, SVM etc. 
 Equation of hyperplane separating two classes is computed based on vector algebra concepts.
-Model parameters are computed by simply traversing dataset, this makes it very efficient which minor tradeoff with accuracy possible with standard algorithms.
+Model parameters are computed by simply traversing dataset, this makes it very efficient with minor tradeoff with accuracy possible with standard algorithms.
 Hence this algorithm is different to traditional models which use objective function and use gradient descent to compute weights, and result is again an equation of hyperplane separating two classes.
 
 
