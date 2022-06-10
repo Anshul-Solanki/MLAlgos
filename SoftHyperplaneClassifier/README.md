@@ -2,10 +2,8 @@
 # Introduction to SoftHyperplaneClassifier
 
 This is machine learning model for binary class prediction of linearly separable data similar to standard models like Logistic Regression, SVM etc. 
-Equation of hyperplane separating two classes is computed based on vector algebra concepts.
-Model parameters are computed by simply traversing dataset, this makes it very efficient with minor tradeoff with accuracy possible with standard algorithms.
-Hence this algorithm is different to traditional models which use objective function and use gradient descent to compute weights, and result is again an equation of hyperplane separating two classes.
-
+Equation of hyperplane separating two classes is computed based on vector algebra concepts. 
+This is very efficient model with time complexity of O(N) where parameters are computed by simply traversing dataset compared to standard models which use gradient descent.  
 
 ## Input Dataset
 
@@ -20,8 +18,7 @@ First step is to find centers of both classes.
 These centers will be computed by iterating through dataset and finding mean by aggregating sum of data points of each class and dividing by number of data points in class.
 Again centers will represent a two vectors in N dimension space.
 
-Objective of algorithm is to find equation of hyperplane separating two classes preferably with maximum separation possible.
-This is achieved using gradient descent to converge objective function using standard ML algorithms like logistic regression, SVM etc.  
+Objective of algorithm is to find approximate equation of hyperplane separating two classes using vector algebra concepsts, preferably with maximum separation possible with good time optimization(compared to gradient descent based models).  
 
 Generally equation looks like: Wx + b = 0  
 W : model parameters (also called weights)  
@@ -33,7 +30,7 @@ Basically meaning point belongs to either side of hyperplane.
 Using concepts of vector algebra, equation of hyperplane can be determined by its perpendicular line and knowledge of at-least one point from where plane will pass through.
 The centers we computed in first step roughly represent the centers of clusters of each class.
 And centers are also vectors representing position of clusters in N dimension space.
-Since we expect dataset to be linearly separable, the desired hyperplan will exist between two centers and roughly perpendicular to the vector joining them.
+Since we expect dataset to be linearly separable, the desired hyperplane will exist between two centers and roughly perpendicular to the vector joining them.
 
 If centers are C1 and C2.
 Then vector joining centers is C1 - C2.
